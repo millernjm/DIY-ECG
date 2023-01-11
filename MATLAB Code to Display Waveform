@@ -1,0 +1,102 @@
+%Initialize
+clear
+clc
+
+% Capturing the amplitudes of the last complete block
+readAPIKey1 = 'KEY1';
+readAPIKey2 = 'KEY2';
+readAPIKey3 = 'KEY3';
+
+
+% Amplitude
+[Amp,t] = thingSpeakRead(ENTER_CHANNEL_NUMBER, 'Numminutes', 50000, 'ReadKey', readAPIKey1);
+%A = Amp(end-5:end, 1:6);
+%A(isnan(A))=0;
+%A = A*ones(6,1)
+
+A = Amp(:,1)
+Len = length(A);
+
+CNT = [];
+for k = 1:Len
+    if((A(k) > -100000) && (A(k) < 100000))
+        CNT = [CNT ; k]
+    end
+end
+
+[a b] = size(Amp);
+if (a - CNT(end) ~= 5)
+    KNT = CNT(end-1);
+else
+    KNT = CNT(end);
+end
+
+amp = Amp(KNT:KNT+5 , :);
+AMP = diag(amp)
+
+
+    
+    
+
+% Frequency 
+[Freq,t] = thingSpeakRead(ENTER_CHANNEL_NUMBER, 'Numminutes', 50000,'ReadKey', readAPIKey2);
+%F = Freq(end-5:end,1:6);
+%F(isnan(F)) = 0;
+%F = F*ones(6,1)
+
+F = Freq(:,1)
+Len = length(F);
+
+CNT = [];
+for k = 1:Len
+    if((F(k) > -100000) && (F(k) < 100000))
+        CNT = [CNT ; k]
+    end
+end
+
+[a b] = size(Freq);
+if (a - CNT(end) ~= 5)
+    KNT = CNT(end-1);
+else
+    KNT = CNT(end);
+end
+
+freq = Freq(KNT:KNT+5 , :);
+FREQ = diag(freq)
+
+% Phase
+[Phaz,t] = thingSpeakRead(ENTER_CHANNEL_NUMBER, 'Numminutes', 50000,'ReadKey', readAPIKey3);
+%P = Phaz(end-5:end,1:6);
+%P(isnan(P)) = 0;
+%P = P*ones(6,1)
+
+P = Phaz(:,1)
+Len = length(P);
+
+CNT = [];
+for k = 1:Len
+    if((P(k) > -100000) && (P(k) < 100000))
+        CNT = [CNT ; k]
+    end
+end
+
+[a b] = size(Phaz);
+if (a - CNT(end) ~= 5)
+    KNT = CNT(end-1);
+else
+    KNT = CNT(end);
+end
+
+phaz = Phaz(KNT:KNT+5 , :);
+PHAZ = diag(phaz)
+
+AMP 
+FREQ 
+PHAZ 
+
+t = 0:0.01:8;
+% Reconstructed signal
+W = AMP(1)*sin(2*pi*FREQ(1)*t + PHAZ(1)) + AMP(2)*sin(2*pi*FREQ(2)*t + PHAZ(2)) + AMP(3)*sin(2*pi*FREQ(3)*t + PHAZ(3)) + AMP(4)*sin(2*pi*FREQ(4)*t + PHAZ(4)) +AMP(5)*sin(2*pi*FREQ(5)*t + PHAZ(5)) +AMP(6)*sin(2*pi*FREQ(6)*t + PHAZ(6));
+plot(t(1:floor(length(t)/2)),W(1:floor(length(t)/2)))
+plot(t,W)
+
